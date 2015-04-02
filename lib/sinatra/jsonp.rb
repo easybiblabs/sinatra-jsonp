@@ -15,10 +15,10 @@ module Sinatra
         end
         if callback
           callback.tr!('^a-zA-Z0-9_$\.', '')
-          content_type :js
+          content_type :js, charset: 'utf-8'
           response = "#{callback}(#{data})"
         else
-          content_type :json
+          content_type :json, charset: 'utf-8'
           response = data
         end
         response

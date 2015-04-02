@@ -6,6 +6,10 @@ describe Sinatra::Jsonp do
     mock_app do
       helpers Sinatra::Jsonp
 
+      before do
+        content_type 'application/json', 'charset' => 'utf-8'
+      end
+
       get '/method' do
         data = ["hello","hi","hallo"]
         jsonp data
@@ -21,9 +25,20 @@ describe Sinatra::Jsonp do
     get '/method'
     body.should == '["hello","hi","hallo"]'
   end
+
+  it "returns UTF-8 as charset for JSON responses" do
+    get '/method'
+    last_response.headers['Content-Type'].downcase.should =~ /charset=utf-8/
+  end
+
   it "returns JSONP if callback passed via request params" do
     get '/method?callback=functionA'
     body.should == 'functionA(["hello","hi","hallo"])'
+  end
+
+  it "returns UTF-8 as charset for JSONP responses" do
+    get '/method?callback=functionA'
+    last_response.headers['Content-Type'].downcase.should  =~ /charset=utf-8/
   end
 
   it "returns JSONP with sanitized callback" do
